@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LucienCard — Cartes PSN, PS Plus, Xbox, Nintendo, Roblox, Fortnite, Steam, Play Store, App Store & Netflix</title>
+  <title>LucienCard — Cartes PSN, Xbox, Nintendo, Minecraft, Minecoins, Roblox, Fortnite, Steam & Netflix</title>
   <link id="siteFavicon" rel="icon" type="image/webp" href="logo.webp" />
 
   <!-- Polices Google Fonts : Inter & Plus Jakarta Sans -->
@@ -209,7 +209,7 @@
         <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white border border-line text-[11px] font-semibold text-zinc-700 mb-3 shadow-sm">
           <span>Codes digitaux authentiques</span>
           <span class="text-zinc-300">•</span>
-          <span>11 marques officielles</span>
+          <span>13 marques officielles</span>
         </div>
         <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-ink tracking-tight">
           Choisissez votre carte, la région et le montant.
@@ -258,7 +258,7 @@
     </div>
   </section>
 
-  <!-- GRILLE DES 11 CARTES CADEAUX -->
+  <!-- GRILLE DES 13 CARTES CADEAUX -->
   <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 sm:py-6">
     <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Généré dynamiquement par JS -->
@@ -448,6 +448,13 @@
     <div class="px-3.5 py-2 bg-[#FAF9F6] border-b border-line flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
       <button
         type="button"
+        onclick="sendQuickAiPrompt('Combien coûtent Minecraft Java & Bedrock et les Minecoins ?')"
+        class="text-[11px] font-medium bg-white border border-line hover:border-zinc-400 text-zinc-700 px-3 py-1 rounded-full whitespace-nowrap transition shadow-sm"
+      >
+        ⛏️ Minecraft & Minecoins ?
+      </button>
+      <button
+        type="button"
         onclick="sendQuickAiPrompt('Quelle carte me conseilles-tu pour Roblox ?')"
         class="text-[11px] font-medium bg-white border border-line hover:border-zinc-400 text-zinc-700 px-3 py-1 rounded-full whitespace-nowrap transition shadow-sm"
       >
@@ -606,9 +613,9 @@
 
     // Catégories de filtrage
     const CATEGORIES = [
-      { id: 'all', label: 'Toutes (11)' },
+      { id: 'all', label: 'Toutes (13)' },
       { id: 'consoles', label: 'Consoles' },
-      { id: 'jeux', label: 'Jeux (Roblox / Fortnite)' },
+      { id: 'jeux', label: 'Jeux (Minecraft, Roblox, Fortnite)' },
       { id: 'mobile-pc', label: 'Mobile & PC' },
       { id: 'streaming', label: 'Streaming' }
     ];
@@ -820,6 +827,84 @@
         logoSvg: `
           <svg class="w-9 h-9 shrink-0" viewBox="0 0 24 24" fill="none">
             <path fill="#FFFFFF" d="M5 1h15v5.2h-8.8v3.4H18v5.2h-6.8V23L5 21V1Z"/>
+          </svg>
+        `
+      },
+              {
+        id: 'minecraft',
+        category: 'jeux',
+        name: 'Minecraft (Java & Bedrock Edition)',
+        shortName: 'Minecraft Java & Bedrock',
+        description: 'Code digital officiel Minecraft pour PC : inclut les deux éditions complètes Java et Bedrock avec multijoueur, serveurs et mises à jour gratuites.',
+        regions: ['FR', 'US', 'GL'],
+        denominationsByRegion: {
+          FR: [15, 30],
+          US: [15, 30],
+          GL: [15, 30]
+        },
+        bonusByAmount: {
+          15: 'Deluxe Upgrade / DLC',
+          30: 'Jeu Complet Officiel'
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#2E6F40] via-[#1B4324] to-[#0E2413]',
+          textClass: 'text-white',
+          subTextClass: 'text-emerald-200',
+          badgeClass: 'bg-emerald-400/20 text-emerald-100 border-emerald-400/30',
+          borderClass: 'border-[#2E6F40]'
+        },
+        logoSvg: `
+          <svg class="w-9 h-9 shrink-0" viewBox="0 0 24 24" fill="none">
+            <!-- Official Minecraft Creeper Face Logo -->
+            <rect width="24" height="24" rx="3.5" fill="#4E9331"/>
+            <rect x="3" y="3" width="6" height="6" fill="#141414"/>
+            <rect x="15" y="3" width="6" height="6" fill="#141414"/>
+            <rect x="9" y="9" width="6" height="6" fill="#141414"/>
+            <rect x="6" y="12" width="3" height="9" fill="#141414"/>
+            <rect x="15" y="12" width="3" height="9" fill="#141414"/>
+            <rect x="9" y="15" width="6" height="6" fill="#141414"/>
+          </svg>
+        `
+      },
+      {
+        id: 'minecoins',
+        category: 'jeux',
+        name: 'Minecraft Minecoins',
+        shortName: 'Minecoins (Marketplace)',
+        description: 'Pièces virtuelles officielles Minecraft Marketplace : achetez skins, packs de textures, mondes créatifs et mini-jeux sur Bedrock.',
+        regions: ['FR', 'US', 'GL'],
+        denominationsByRegion: {
+          FR: [10, 20, 25, 50],
+          US: [10, 20, 25, 50],
+          GL: [10, 20, 25, 50]
+        },
+        bonusByAmount: {
+          10: '1 720 Minecoins',
+          20: '3 500 Minecoins',
+          25: '4 375 Minecoins',
+          50: '8 800 Minecoins'
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#3B2D54] via-[#241A38] to-[#120B20]',
+          textClass: 'text-white',
+          subTextClass: 'text-amber-200',
+          badgeClass: 'bg-amber-400/20 text-amber-200 border-amber-400/30',
+          borderClass: 'border-[#4A3968]'
+        },
+        logoSvg: `
+          <svg class="w-9 h-9 shrink-0" viewBox="0 0 32 32" fill="none">
+            <!-- Official Minecoin Token Logo -->
+            <circle cx="16" cy="16" r="15" fill="#D97706" stroke="#92400E" stroke-width="1.5"/>
+            <circle cx="16" cy="16" r="13" fill="#F59E0B"/>
+            <circle cx="16" cy="16" r="10.5" fill="#FBBF24" stroke="#FDE68A" stroke-width="1.5"/>
+            <g fill="#78350F">
+              <rect x="9" y="10" width="3" height="12" rx="0.5"/>
+              <rect x="20" y="10" width="3" height="12" rx="0.5"/>
+              <rect x="12" y="13" width="2.5" height="3" rx="0.5"/>
+              <rect x="17.5" y="13" width="2.5" height="3" rx="0.5"/>
+              <rect x="14.5" y="15" width="3" height="3" rx="0.5"/>
+            </g>
+            <circle cx="16" cy="16" r="10.5" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="6 26" opacity="0.75"/>
           </svg>
         `
       },
@@ -1297,7 +1382,7 @@
               onclick="resetFilters()"
               class="mt-4 px-4 py-2 rounded-xl bg-ink text-white text-xs font-semibold"
             >
-              Afficher les 11 cartes
+              Afficher les 13 cartes
             </button>
           </div>
         `;
@@ -1541,22 +1626,24 @@ Informations officielles de LucienCard :
 - Contact WhatsApp officiel : +224 662 24 30 70
 - Moyens de paiement : Orange Money Guinée et MTN Mobile Money.
 - Livraison : Code digital officiel envoyé immédiatement sur WhatsApp après confirmation du paiement.
-- Catalogue des 11 cartes :
+- Catalogue des 13 cartes :
   1. PlayStation Network (PSN) : 10€, 20€, 25€, 50€, 100€ (France) et 10$, 20$, 25$, 50$, 100$ (USA)
   2. PlayStation Plus : Essential 1 Mois (15€ / $15), 3 Mois (25€ / $25), 12 Mois (75€ / $80)
   3. Carte Cadeau Xbox : 10, 15, 25, 50, 100 (€ / $ / Global)
   4. Nintendo eShop : 15€, 25€, 50€ (France) et 10$, 20$, 35$, 50$ (USA)
   5. Roblox (Robux) : 800 Robux (10€/$10), 1 700 Robux (20€), 2 000 Robux (25€/$25), 4 500 Robux (50€/$50), 10 000 Robux (100$)
   6. Fortnite (V-Bucks) : 1 000 VB (9€ / $9), 2 800 VB (23€ / $23), 5 000 VB (37€ / $37), 13 500 VB (90€ / $90)
-  7. Portefeuille Steam : 10€, 20€, 50€, 100€ (et $10, $20, $50, $100 / Global)
-  8. Google Play Store : 15€, 25€, 50€, 100€ (France) et $10, $15, $25, $50, $100 (USA)
-  9. Apple App Store & iTunes : 10, 15, 25, 50, 100 (€ / $)
-  10. Microsoft Store : 10, 15, 25, 50, 100 (€ / $)
-  11. Netflix : 15€, 25€, 50€ (France & USA)
+  7. Minecraft (Java & Bedrock Edition) : 15€ / $15 (Deluxe Pack / DLC), 30€ / $30 (Jeu Complet officiel PC Java + Bedrock)
+  8. Minecraft Minecoins : 1 720 Minecoins (10€ / $10), 3 500 Minecoins (20€ / $20), 4 375 Minecoins (25€ / $25), 8 800 Minecoins (50€ / $50)
+  9. Portefeuille Steam : 10€, 20€, 50€, 100€ (et $10, $20, $50, $100 / Global)
+  10. Google Play Store : 15€, 25€, 50€, 100€ (France) et $10, $15, $25, $50, $100 (USA)
+  11. Apple App Store & iTunes : 10, 15, 25, 50, 100 (€ / $)
+  12. Microsoft Store : 10, 15, 25, 50, 100 (€ / $)
+  13. Netflix : 15€, 25€, 50€ (France & USA)
 - Régions :
   * France 🇫🇷 (Euros €)
   * USA 🇺🇸 (Dollars $)
-  * Global 🌍 (Steam, Roblox, Fortnite, Xbox)
+  * Global 🌍 (Steam, Roblox, Fortnite, Minecraft, Minecoins, Xbox)
   Important : Rappelle aux clients que la région de la carte doit impérativement correspondre à la région de leur compte (ex: compte PlayStation français = carte PSN France).
 - Prix en Franc Guinéen (GNF) : conversion réelle de la devise + une marge transparente de 20 000 GNF par carte.
   Exemples de prix :
