@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LucienCard — Cartes PSN, PS Plus, Xbox, Nintendo, Roblox, Fortnite, Steam, Play Store, App Store & Netflix</title>
+  <link id="siteFavicon" rel="icon" type="image/webp" href="logo.webp" />
+
+  <!-- Polices Google Fonts : Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            canvas: '#F6F5F2',
+            surface: '#FFFFFF',
+            ink: '#161615',
+            muted: '#6E6D68',
+            line: '#E5E4DF',
+            whatsapp: '#1FA855',
+            whatsappDark: '#178743'
+          }
+        }
+      }
+    };
+
+    // SVG Data URI fidèle à l'image de l'os cartoon brillant (fallback garanti sans icône cassée + favicon)
+    window.BONE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" fill="none">
+      <g transform="rotate(-28 120 80)">
+        <!-- Contour noir épais -->
+        <path d="M46 55C30 42 10 53 12 72C13 80 19 85 19 85C19 85 13 91 12 99C10 118 31 128 47 115C55 108 62 100 72 100L168 100C178 100 185 108 193 115C209 128 230 118 228 99C227 91 221 85 221 85C221 85 227 80 228 72C230 53 210 42 194 55C186 62 178 70 168 70L72 70C62 70 54 62 46 55Z" fill="#EFE3CE" stroke="#14110F" stroke-width="10" stroke-linejoin="round"/>
+        <!-- Ombre chaude interne -->
+        <path d="M35 113C44 114 54 102 68 98L172 98C186 102 196 114 205 113C216 112 222 102 218 93C215 88 212 85 212 85C206 91 196 92 174 90L66 90C44 92 34 91 28 85C28 85 25 88 22 93C18 102 24 112 35 113Z" fill="#D5BE9E"/>
+        <!-- Reflets brillants blancs -->
+        <ellipse cx="32" cy="67" rx="11" ry="8" fill="#FFFFFF" opacity="0.9"/>
+        <ellipse cx="206" cy="67" rx="11" ry="8" fill="#FFFFFF" opacity="0.9"/>
+        <path d="M68 77H170" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+        <!-- Petites fissures cartoon -->
+        <path d="M58 75L69 81L63 87" stroke="#5C4938" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M178 96L167 90L173 84" stroke="#5C4938" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </svg>`;
+    window.BONE_LOGO_DATA_URI = 'data:image/svg+xml;utf8,' + encodeURIComponent(window.BONE_LOGO_SVG);
+
+    // Vérifie si logo.webp existe sinon bascule proprement le favicon sur l'os vectoriel
+    window.addEventListener('DOMContentLoaded', () => {
+      const testImg = new Image();
+      testImg.onerror = () => {
+        const fav = document.getElementById('siteFavicon');
+        if (fav) fav.href = window.BONE_LOGO_DATA_URI;
+      };
+      testImg.src = 'logo.webp';
+    });
+  </script>
+
+  <style>
+    body {
+      background-color: #F6F5F2;
+      color: #161615;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Encoche de suspension magasin en haut de chaque carte cadeau physique */
+    .retail-hang-hole {
+      width: 46px;
+      height: 11px;
+      border-radius: 999px;
+      background-color: rgba(246, 245, 242, 0.95);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+      position: relative;
+    }
+
+    /* Léger reflet physique sur les cartes cadeaux */
+    .physical-gift-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .physical-gift-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.03) 45%, rgba(0,0,0,0.15) 100%);
+      pointer-events: none;
+    }
+    .product-wrapper:hover .physical-gift-card {
+      transform: translateY(-2px);
+    }
+
+    /* Masquer la barre de défilement horizontale sur mobile */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-zinc-900 selection:text-white">
+
+  <!-- HEADER / NAVIGATION -->
+  <header class="sticky top-0 z-30 bg-[#F6F5F2]/95 backdrop-blur-md border-b border-line">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <!-- Logo LucienCard avec image logo.webp et fallback vectoriel immédiat -->
+      <a href="#" class="flex items-center gap-2.5 group shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-white border border-line shadow-sm flex items-center justify-center p-1.5 group-hover:scale-105 transition">
+          <img
+            src="logo.webp"
+            alt="Logo LucienCard"
+            class="w-full h-full object-contain"
+            onerror="this.onerror=null; this.src=window.BONE_LOGO_DATA_URI;"
+          />
+        </div>
+        <div>
+          <span class="font-display font-extrabold text-lg tracking-tight text-ink block leading-none">
+            LucienCard
+          </span>
+          <span class="text-[11px] text-muted font-medium block mt-0.5">
+            Cartes Cadeaux Officielles
+          </span>
+        </div>
+      </a>
+
+      <!-- Actions à droite : Affichage Devise + Panier + Contact WhatsApp -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Bascule d'affichage du prix principal (GNF ou Devise de la carte) -->
+        <div class="inline-flex items-center bg-white border border-line rounded-xl p-0.5 text-xs font-semibold">
+          <button
+            type="button"
+            id="btnCurrencyGNF"
+            onclick="setDisplayCurrency('GNF')"
+            class="px-2.5 py-1.5 rounded-lg transition bg-ink text-white"
+          >
+            Prix GNF
+          </button>
+          <button
+            type="button"
+            id="btnCurrencyDevise"
+            onclick="setDisplayCurrency('DEVISE')"
+            class="px-2.5 py-1.5 rounded-lg transition text-muted hover:text-ink"
+          >
+            Devise (€/$)
+          </button>
+        </div>
+
+        <!-- Bouton Compte / Connexion -->
+        <button
+          type="button"
+          id="btnAccount"
+          onclick="handleAccountButton()"
+          class="inline-flex items-center gap-2 bg-white hover:bg-zinc-50 text-ink border border-line px-3 py-2 rounded-xl text-xs font-semibold transition shadow-sm max-w-[160px]"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a7.5 7.5 0 0115 0" />
+          </svg>
+          <span id="accountLabel" class="hidden sm:inline truncate">Connexion</span>
+        </button>
+
+        <!-- Bouton Panier -->
+        <button
+          type="button"
+          onclick="toggleCartDrawer(true)"
+          class="relative inline-flex items-center gap-2 bg-white hover:bg-zinc-50 text-ink border border-line px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-sm"
+          aria-label="Ouvrir le panier"
+        >
+          <svg class="w-4 h-4 text-ink" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+          <span class="hidden sm:inline">Panier</span>
+          <span
+            id="cartCountBadge"
+            class="px-1.5 py-0.5 text-[11px] rounded-md bg-zinc-900 text-white font-bold leading-none"
+          >
+            0
+          </span>
+        </button>
+
+        <!-- Lien direct WhatsApp -->
+        <a
+          href="https://wa.me/224662243070"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hidden md:inline-flex items-center gap-1.5 bg-whatsapp hover:bg-whatsappDark text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-sm"
+        >
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.126.556 4.124 1.535 5.862l-1.535 5.608 5.755-1.509c1.693.923 3.633 1.449 5.697 1.449 6.627 0 12-5.373 12-12s-5.373-12-11.452-11.41z"/>
+          </svg>
+          <span>+224 662 24 30 70</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECTION EN-TÊTE + FILTRES -->
+  <section class="max-w-6xl w-full mx-auto px-4 sm:px-6 pt-8 pb-4">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-line">
+      <div class="max-w-xl">
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white border border-line text-[11px] font-semibold text-zinc-700 mb-3 shadow-sm">
+          <span>Codes digitaux authentiques</span>
+          <span class="text-zinc-300">•</span>
+          <span>11 marques officielles</span>
+        </div>
+        <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-ink tracking-tight">
+          Choisissez votre carte, la région et le montant.
+        </h1>
+        <p class="text-sm text-muted mt-1.5 leading-relaxed">
+          Sélectionnez la région de votre compte (France 🇫🇷, USA 🇺🇸 ou Global 🌍) et le montant souhaité. Commandez directement sur WhatsApp aux prix réels du marché (+ 20 000 GNF de marge transparente).
+        </p>
+      </div>
+
+      <!-- Sélecteur rapide de région pour tout le catalogue -->
+      <div class="shrink-0">
+        <span class="block text-[11px] font-semibold text-muted mb-2">
+          Appliquer une région à toutes les cartes :
+        </span>
+        <div class="inline-flex flex-wrap items-center gap-1.5 bg-white p-1.5 rounded-xl border border-line shadow-sm" id="globalRegionBar">
+          <!-- Généré par JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Barre d'onglets de catégories + Recherche -->
+    <div class="pt-5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <!-- Onglets Catégories -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0" id="categoryTabs">
+        <!-- Généré par JS -->
+      </div>
+
+      <!-- Barre de recherche + compteur -->
+      <div class="flex items-center gap-2.5">
+        <div class="relative flex-1 sm:w-56">
+          <svg class="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M16.65 10.825a5.825 5.825 0 11-11.65 0 5.825 5.825 0 0111.65 0z" />
+          </svg>
+          <input
+            type="text"
+            id="searchInput"
+            oninput="handleSearchInput(this.value)"
+            placeholder="Rechercher (PSN, Roblox...)"
+            class="w-full bg-white border border-line rounded-xl pl-9 pr-3 py-1.5 text-xs text-ink placeholder:text-muted focus:outline-none focus:border-zinc-500 transition"
+          />
+        </div>
+        <span id="catalogCountText" class="text-xs font-medium text-muted shrink-0">
+          11 cartes
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRILLE DES 11 CARTES CADEAUX -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 sm:py-6">
+    <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Généré dynamiquement par JS -->
+    </div>
+  </main>
+
+  <!-- FOOTER ÉPURÉ -->
+  <footer class="border-t border-line mt-12 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
+      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
+        <img
+          src="logo.webp"
+          alt="Logo LucienCard"
+          class="w-6 h-6 object-contain"
+          onerror="this.onerror=null; this.src=window.BONE_LOGO_DATA_URI;"
+        />
+        <span class="font-display font-bold text-sm text-ink">LucienCard</span>
+        <span>—</span>
+        <span>PSN • PS Plus • Xbox • Nintendo • Roblox • Fortnite • Steam • Google Play • App Store • Microsoft • Netflix</span>
+      </div>
+      <div>
+        <a
+          href="https://wa.me/224662243070"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-semibold text-ink hover:underline"
+        >
+          WhatsApp : +224 662 24 30 70
+        </a>
+      </div>
+    </div>
+    <div class="border-t border-line">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-muted">
+        <span>© 2026 LucienCard. Tous droits réservés. Marques citées propriété de leurs détenteurs respectifs.</span>
+        <nav class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+          <a href="/confidentialite.html" class="hover:text-ink hover:underline">Politique de confidentialité</a>
+          <a href="/conditions.html" class="hover:text-ink hover:underline">Conditions d'utilisation</a>
+          <a href="/mentions-legales.html" class="hover:text-ink hover:underline">Mentions légales &amp; remboursement</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <!-- TIROIR PANIER (SLIDE-OVER DRAWER) -->
+  <div
+    id="cartOverlay"
+    onclick="toggleCartDrawer(false)"
+    class="fixed inset-0 bg-black/40 backdrop-blur-[1px] z-40 hidden opacity-0 transition-opacity duration-200"
+  ></div>
+
+  <aside
+    id="cartDrawer"
+    class="fixed top-0 right-0 h-full w-full max-w-md bg-white border-l border-line z-50 transform translate-x-full transition-transform duration-200 flex flex-col shadow-2xl"
+    aria-label="Panier de commande"
+  >
+    <!-- En-tête du panier -->
+    <div class="p-5 border-b border-line flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <img
+          src="logo.webp"
+          alt="LucienCard"
+          class="w-6 h-6 object-contain"
+          onerror="this.onerror=null; this.src=window.BONE_LOGO_DATA_URI;"
+        />
+        <h2 class="font-display font-bold text-base text-ink">Votre Panier</h2>
+      </div>
+      <button
+        type="button"
+        onclick="toggleCartDrawer(false)"
+        class="p-1.5 rounded-lg text-muted hover:text-ink hover:bg-zinc-100 transition"
+        aria-label="Fermer"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Liste des articles du panier -->
+    <div id="cartItemsList" class="flex-1 overflow-y-auto p-5 space-y-3">
+      <!-- Généré par JS -->
+    </div>
+
+    <!-- Pied du panier -->
+    <div class="p-5 border-t border-line bg-[#FAF9F6] space-y-4">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-medium text-muted">Total estimé en GNF</span>
+        <span id="cartTotalGnf" class="font-display font-extrabold text-lg text-ink">0 GNF</span>
+      </div>
+
+      <button
+        type="button"
+        onclick="checkoutCartOnWhatsApp()"
+        id="btnCheckoutWhatsApp"
+        class="w-full py-3 px-4 rounded-xl bg-whatsapp hover:bg-whatsappDark text-white font-semibold text-sm flex items-center justify-center gap-2 transition shadow-sm disabled:opacity-40 disabled:pointer-events-none"
+      >
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+          <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.126.556 4.124 1.535 5.862l-1.535 5.608 5.755-1.509c1.693.923 3.633 1.449 5.697 1.449 6.627 0 12-5.373 12-12s-5.373-12-11.452-11.41z"/>
+        </svg>
+        <span>Envoyer la commande sur WhatsApp</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- BOUTON FLOTTANT CONSEILLER IA -->
+  <button
+    type="button"
+    id="btnOpenAiChat"
+    onclick="toggleAiModal(true)"
+    class="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2.5 bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 hover:from-black hover:to-zinc-900 text-white pl-3.5 pr-4 py-2.5 rounded-full shadow-[0_6px_25px_rgba(0,0,0,0.3)] border border-white/20 transition-all hover:scale-105 active:scale-95 group"
+    aria-label="Ouvrir le conseiller IA LucienCard"
+  >
+    <div class="relative flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-tr from-amber-400 via-rose-500 to-indigo-500 p-0.5 shadow-sm">
+      <div class="w-full h-full rounded-full bg-zinc-900 flex items-center justify-center">
+        <svg class="w-4 h-4 text-amber-300 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+        </svg>
+      </div>
+      <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-zinc-900"></span>
+    </div>
+    <div class="text-left">
+      <span class="block font-display font-bold text-xs tracking-tight text-white flex items-center gap-1.5 leading-none">
+        Conseiller IA
+        <span class="text-[9px] font-extrabold uppercase px-1 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30">Gemini</span>
+      </span>
+      <span class="block text-[10px] text-zinc-300 font-medium leading-none mt-1">Besoin d'aide ou d'un prix ?</span>
+    </div>
+  </button>
+
+  <!-- MODAL / CHAT DRAWER LUCIEN AI -->
+  <div
+    id="aiChatOverlay"
+    onclick="toggleAiModal(false)"
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"
+  ></div>
+
+  <div
+    id="aiChatDrawer"
+    class="fixed bottom-0 right-0 sm:bottom-5 sm:right-5 w-full sm:w-[420px] max-w-full sm:max-w-[calc(100vw-2.5rem)] h-[88vh] sm:h-[620px] max-h-[92vh] bg-surface sm:rounded-3xl rounded-t-3xl shadow-2xl border border-line z-50 transform translate-y-full opacity-0 pointer-events-none transition-all duration-300 flex flex-col overflow-hidden"
+  >
+    <!-- Entête de l'Assistant IA -->
+    <div class="p-4 sm:p-4.5 border-b border-line bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 text-white flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="relative w-9 h-9 rounded-2xl bg-gradient-to-tr from-amber-400 via-rose-500 to-indigo-500 p-0.5 shadow-md shrink-0">
+          <div class="w-full h-full rounded-[14px] bg-zinc-900 flex items-center justify-center">
+            <svg class="w-4 h-4 text-amber-300" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+            </svg>
+          </div>
+          <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-zinc-900"></span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-display font-bold text-sm tracking-tight text-white leading-none">Lucien AI</h3>
+            <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
+              Gemini 3.8 Flash
+            </span>
+          </div>
+          <span class="text-[11px] text-zinc-300 font-medium block mt-0.5">Conseiller Cartes & Régions 24/7</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <button
+          type="button"
+          onclick="resetAiChat()"
+          title="Réinitialiser la discussion"
+          class="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onclick="toggleAiModal(false)"
+          class="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition"
+          aria-label="Fermer"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Suggestions rapides -->
+    <div class="px-3.5 py-2 bg-[#FAF9F6] border-b border-line flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+      <button
+        type="button"
+        onclick="sendQuickAiPrompt('Quelle carte me conseilles-tu pour Roblox ?')"
+        class="text-[11px] font-medium bg-white border border-line hover:border-zinc-400 text-zinc-700 px-3 py-1 rounded-full whitespace-nowrap transition shadow-sm"
+      >
+        🎮 Roblox ?
+      </button>
+      <button
+        type="button"
+        onclick="sendQuickAiPrompt('Quelle est la différence entre un compte PlayStation France et USA ?')"
+        class="text-[11px] font-medium bg-white border border-line hover:border-zinc-400 text-zinc-700 px-3 py-1 rounded-full whitespace-nowrap transition shadow-sm"
+      >
+        🇫🇷 PSN France vs USA ?
+      </button>
+      <button
+        type="button"
+        onclick="sendQuickAiPrompt('Combien coûte une carte de 25$ et de 25€ en GNF ?')"
+        class="text-[11px] font-medium bg-white border border-line hover:border-zinc-400 text-zinc-700 px-3 py-1 rounded-full whitespace-nowrap transition shadow-sm"
+      >
+        💰 Prix 25$ / 25€ ?
+      </button>
+      <button
+        type="button"
+        onclick="sendQuickAiPrompt('Comment payer et recevoir mon code digital sur WhatsApp ?')"
+        class="text-[11px] font-medium bg-white border border-line hover:border-zinc-400 text-zinc-700 px-3 py-1 rounded-full whitespace-nowrap transition shadow-sm"
+      >
+        📱 Comment commander ?
+      </button>
+    </div>
+
+    <!-- Zone des messages du chat -->
+    <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F6F5F2]/40 text-xs">
+      <!-- Message d'accueil généré -->
+    </div>
+
+    <!-- Indicateur de saisie IA -->
+    <div id="aiTypingIndicator" class="hidden px-4 py-2 bg-transparent text-[11px] text-muted flex items-center gap-2">
+      <div class="flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce [animation-delay:0.2s]"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce [animation-delay:0.4s]"></span>
+      </div>
+      <span class="italic text-[10px]">Lucien AI prépare sa réponse...</span>
+    </div>
+
+    <!-- Barre de saisie -->
+    <form id="aiChatForm" onsubmit="handleAiChatSubmit(event)" class="p-3 bg-white border-t border-line shrink-0">
+      <div class="flex items-center gap-2">
+        <input
+          type="text"
+          id="aiChatInput"
+          placeholder="Posez votre question (carte, région, prix...)"
+          autocomplete="off"
+          class="flex-1 bg-[#F6F5F2] border border-line rounded-xl px-3.5 py-2.5 text-xs text-ink placeholder:text-muted focus:outline-none focus:border-zinc-600 transition"
+        />
+        <button
+          type="submit"
+          id="btnSendAiMessage"
+          class="p-2.5 rounded-xl bg-ink hover:bg-zinc-800 text-white transition shadow-sm disabled:opacity-40 disabled:pointer-events-none"
+        >
+          <svg class="w-4 h-4 fill-current rotate-45 -translate-y-0.5 -translate-x-0.5" viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="mt-1.5 flex items-center justify-between text-[10px] text-muted px-1">
+        <span>Conseiller officiel LucienCard</span>
+        <a href="https://wa.me/224662243070" target="_blank" class="text-whatsapp hover:underline font-medium">WhatsApp direct</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- MODAL CONNEXION / INSCRIPTION -->
+  <div id="authOverlay" onclick="toggleAuthModal(false)" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-200"></div>
+  <div id="authModal" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-sm bg-surface rounded-3xl shadow-2xl border border-line z-[61] opacity-0 scale-95 pointer-events-none transition-all duration-200 p-6">
+    <button type="button" onclick="toggleAuthModal(false)" class="absolute top-4 right-4 p-1.5 rounded-lg text-muted hover:text-ink hover:bg-zinc-100" aria-label="Fermer">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+    </button>
+
+    <!-- Vue : non connecté -->
+    <div id="authViewSignedOut">
+      <h2 class="font-display font-extrabold text-xl text-ink tracking-tight">Connexion</h2>
+      <p class="text-xs text-muted mt-1 mb-5">Connectez-vous pour discuter avec le conseiller IA LucienCard.</p>
+
+      <div class="space-y-2">
+        <button type="button" onclick="lcSignInGoogle()" class="w-full py-2.5 px-3 rounded-xl border border-line bg-white hover:bg-zinc-50 text-xs font-semibold text-ink flex items-center justify-center gap-2.5 transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0012 23z"/><path fill="#FBBC05" d="M5.84 14.1A6.6 6.6 0 015.5 12c0-.73.13-1.44.34-2.1V7.06H2.18A11 11 0 001 12c0 1.77.42 3.45 1.18 4.94l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A10.97 10.97 0 0012 1 11 11 0 002.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/></svg>
+          Continuer avec Google
+        </button>
+        <button type="button" onclick="lcSignInMicrosoft()" class="w-full py-2.5 px-3 rounded-xl border border-line bg-white hover:bg-zinc-50 text-xs font-semibold text-ink flex items-center justify-center gap-2.5 transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24"><rect x="2" y="2" width="9.5" height="9.5" fill="#F25022"/><rect x="12.5" y="2" width="9.5" height="9.5" fill="#7FBA00"/><rect x="2" y="12.5" width="9.5" height="9.5" fill="#00A4EF"/><rect x="12.5" y="12.5" width="9.5" height="9.5" fill="#FFB900"/></svg>
+          Continuer avec Microsoft
+        </button>
+      </div>
+
+      <div class="flex items-center gap-3 my-4 text-[10px] text-muted uppercase tracking-wider">
+        <span class="flex-1 h-px bg-line"></span>ou par e-mail<span class="flex-1 h-px bg-line"></span>
+      </div>
+
+      <form onsubmit="lcEmailSubmit(event)" class="space-y-2">
+        <input id="authEmail" type="email" required autocomplete="email" placeholder="Adresse e-mail" class="w-full bg-[#F6F5F2] border border-line rounded-xl px-3.5 py-2.5 text-xs text-ink focus:outline-none focus:border-zinc-600" />
+        <input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="Mot de passe (6 caractères min.)" class="w-full bg-[#F6F5F2] border border-line rounded-xl px-3.5 py-2.5 text-xs text-ink focus:outline-none focus:border-zinc-600" />
+        <button id="authEmailBtn" type="submit" class="w-full py-2.5 rounded-xl bg-ink hover:bg-zinc-800 text-white text-xs font-semibold transition">Se connecter</button>
+      </form>
+      <div class="flex items-center justify-between mt-2 text-[11px]">
+        <button type="button" onclick="lcToggleEmailMode()" id="authModeToggle" class="text-ink font-semibold hover:underline">Créer un compte</button>
+        <button type="button" onclick="lcResetPassword()" class="text-muted hover:text-ink hover:underline">Mot de passe oublié ?</button>
+      </div>
+
+      <button type="button" onclick="lcSignInAnonymous()" class="w-full mt-4 py-2 rounded-xl text-[11px] font-semibold text-zinc-600 hover:text-ink hover:bg-zinc-100 transition">
+        Continuer en tant qu'invité
+      </button>
+      <p class="text-[10px] text-muted text-center leading-relaxed">Les comptes invités sont supprimés automatiquement après 30 jours.</p>
+
+      <p id="authError" class="hidden mt-3 text-[11px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></p>
+
+      <p class="text-[10px] text-muted mt-4 leading-relaxed text-center">
+        En continuant, vous acceptez nos <a href="/conditions.html" class="underline hover:text-ink">Conditions d'utilisation</a>
+        et notre <a href="/confidentialite.html" class="underline hover:text-ink">Politique de confidentialité</a>.
+      </p>
+    </div>
+
+    <!-- Vue : connecté -->
+    <div id="authViewSignedIn" class="hidden">
+      <h2 class="font-display font-extrabold text-xl text-ink tracking-tight">Mon compte</h2>
+      <div class="mt-4 p-3.5 rounded-2xl bg-[#FAF9F6] border border-line">
+        <p id="authUserName" class="text-sm font-semibold text-ink truncate"></p>
+        <p id="authUserEmail" class="text-xs text-muted truncate mt-0.5"></p>
+        <p id="authGuestNotice" class="hidden text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1.5 mt-2.5">
+          Compte invité : il sera supprimé automatiquement après 30 jours. Connectez-vous avec Google, Microsoft ou e-mail pour le conserver.
+        </p>
+      </div>
+      <button type="button" onclick="toggleAuthModal(false); toggleAiModal(true);" class="w-full mt-4 py-2.5 rounded-xl bg-ink hover:bg-zinc-800 text-white text-xs font-semibold transition">Ouvrir le conseiller IA</button>
+      <button type="button" onclick="lcSignOut()" class="w-full mt-2 py-2.5 rounded-xl border border-line bg-white hover:bg-zinc-50 text-xs font-semibold text-ink transition">Se déconnecter</button>
+    </div>
+  </div>
+
+  <!-- NOTIFICATION TOAST DISCRÈTE -->
+  <div
+    id="toastBox"
+    class="fixed bottom-20 right-5 z-50 bg-ink text-white text-xs font-medium px-4 py-3 rounded-xl shadow-lg border border-zinc-700 transform translate-y-16 opacity-0 pointer-events-none transition-all duration-200 flex items-center gap-2.5"
+  >
+    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+    <span id="toastMessage">Carte ajoutée au panier</span>
+  </div>
+
+  <!-- LOGIQUE JAVASCRIPT COMPLÈTE -->
+  <script>
+    // Numéro WhatsApp officiel
+    const WHATSAPP_PHONE = '224662243070';
+
+    // Régions authentiques disponibles pour les comptes des clients
+    const REGIONS = {
+      FR: { code: 'FR', name: 'France', flag: '🇫🇷', symbol: '€', position: 'after', gnfRate: 9500 },
+      US: { code: 'US', name: 'USA', flag: '🇺🇸', symbol: '$', position: 'before', gnfRate: 8800 },
+      GL: { code: 'GL', name: 'Global', flag: '🌍', symbol: '$', position: 'before', gnfRate: 8800 }
+    };
+
+    // Catégories de filtrage
+    const CATEGORIES = [
+      { id: 'all', label: 'Toutes (11)' },
+      { id: 'consoles', label: 'Consoles' },
+      { id: 'jeux', label: 'Jeux (Roblox / Fortnite)' },
+      { id: 'mobile-pc', label: 'Mobile & PC' },
+      { id: 'streaming', label: 'Streaming' }
+    ];
+
+    // Calcul du prix en Franc Guinéen (GNF) :
+    // Prix de base réel (Valeur nominale × Taux de la devise) + 20 000 GNF de marge LucienCard (+10k supplémentaires)
+    function getGnfPrice(amount, regionCode) {
+      const reg = REGIONS[regionCode] || REGIONS.FR;
+      const basePrice = amount * (reg.gnfRate || 9500);
+      return Math.round(basePrice + 20000);
+    }
+
+    function formatGnf(gnfAmount) {
+      return new Intl.NumberFormat('fr-FR').format(Math.round(gnfAmount)) + ' GNF';
+    }
+
+    function formatShortK(gnfAmount) {
+      const k = gnfAmount / 1000;
+      return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(k) + 'k';
+    }
+
+    function formatDenomination(amount, regionCode) {
+      const reg = REGIONS[regionCode] || REGIONS.FR;
+      return reg.position === 'before'
+        ? `${reg.symbol}${amount}`
+        : `${amount}${reg.symbol}`;
+    }
+
+    function formatCardPrice(amount, regionCode) {
+      const gnfFormatted = formatGnf(getGnfPrice(amount, regionCode));
+      const faceFormatted = formatDenomination(amount, regionCode);
+      if (state.displayCurrency === 'GNF') {
+        return { primary: gnfFormatted, secondary: `Carte officielle de ${faceFormatted}` };
+      } else {
+        return { primary: faceFormatted, secondary: gnfFormatted };
+      }
+    }
+
+    function getCardDenominations(card, regionCode) {
+      if (card.denominationsByRegion && card.denominationsByRegion[regionCode]) {
+        return card.denominationsByRegion[regionCode];
+      }
+      return card.denominations || [10, 25, 50, 100];
+    }
+
+    // Catalogue complet des 11 cartes cadeaux avec visuels physiques, vrais montants officiels et logos SVG
+    const CARDS = [
+      {
+        id: 'psn',
+        category: 'consoles',
+        name: 'PlayStation Network (PSN)',
+        shortName: 'PlayStation Store',
+        description: 'Crédit officiel pour PS5 et PS4 : achetez vos jeux, extensions et contenus sur le PlayStation Store.',
+        regions: ['FR', 'US'],
+        denominationsByRegion: {
+          FR: [10, 20, 25, 50, 100],
+          US: [10, 20, 25, 50, 100]
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#00439C] via-[#003073] to-[#001B44]',
+          textClass: 'text-white',
+          subTextClass: 'text-blue-200',
+          badgeClass: 'bg-white/15 text-white border-white/25',
+          borderClass: 'border-[#002B66]'
+        },
+        logoSvg: `
+          <svg class="w-9 h-9 fill-current text-white shrink-0" viewBox="0 0 24 24">
+            <path d="M8.985 2.596v17.548l3.915 1.261V6.688c0-.69.304-1.151.794-.991.636.181.76.814.76 1.505v5.876c2.441 1.193 4.362-.002 4.362-3.153 0-3.237-1.126-4.675-4.438-5.827-1.307-.448-3.728-1.186-5.393-1.502zm4.656 16.242l6.296-2.275c.715-.258.826-.625.247-.818-.586-.192-1.637-.139-2.357.123l-4.186 1.48v-2.35l.24-.085s1.201-.42 2.913-.615c1.702-.187 3.785.03 5.437.681 1.848.581 2.057 1.439 1.591 2.028-.468.589-1.622 1.015-1.622 1.015l-8.559 3.072v-2.256zM1.808 18.6c-1.903-.545-2.238-1.668-1.363-2.32.801-.586 2.16-.994 2.16-.994l5.622-2.003v2.285l-4.039 1.448c-.705.257-.815.621-.238.816.584.192 1.638.14 2.355-.12l1.922-.699v2.052c-.122.022-.258.043-.39.065-1.933.314-3.987.114-6.029-.53z"/>
+          </svg>
+        `
+      },
+      {
+        id: 'ps-plus',
+        category: 'consoles',
+        name: 'PlayStation Plus (PS Plus)',
+        shortName: 'PlayStation Plus',
+        description: 'Abonnement officiel PlayStation Plus (jeux du mois, multijoueur en ligne et catalogue de jeux).',
+        regions: ['FR', 'US'],
+        denominationsByRegion: {
+          FR: [15, 25, 75],
+          US: [15, 25, 80]
+        },
+        bonusByAmount: {
+          15: '1 Mois',
+          25: '3 Mois',
+          75: '12 Mois',
+          80: '12 Mois'
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#27272A] via-[#18181B] to-[#09090B]',
+          textClass: 'text-white',
+          subTextClass: 'text-[#FACC15]',
+          badgeClass: 'bg-[#EAB308]/20 text-[#FDE047] border-[#EAB308]/40',
+          borderClass: 'border-[#EAB308]/40'
+        },
+        logoSvg: `
+          <svg class="w-10 h-9 shrink-0" viewBox="0 0 30 24" fill="none">
+            <g transform="translate(0 0)"><path fill="#FFFFFF" d="M8.985 2.596v17.548l3.915 1.261V6.688c0-.69.304-1.151.794-.991.636.181.76.814.76 1.505v5.876c2.441 1.193 4.362-.002 4.362-3.153 0-3.237-1.126-4.675-4.438-5.827-1.307-.448-3.728-1.186-5.393-1.502zm4.656 16.242l6.296-2.275c.715-.258.826-.625.247-.818-.586-.192-1.637-.139-2.357.123l-4.186 1.48v-2.35l.24-.085s1.201-.42 2.913-.615c1.702-.187 3.785.03 5.437.681 1.848.581 2.057 1.439 1.591 2.028-.468.589-1.622 1.015-1.622 1.015l-8.559 3.072v-2.256zM1.808 18.6c-1.903-.545-2.238-1.668-1.363-2.32.801-.586 2.16-.994 2.16-.994l5.622-2.003v2.285l-4.039 1.448c-.705.257-.815.621-.238.816.584.192 1.638.14 2.355-.12l1.922-.699v2.052c-.122.022-.258.043-.39.065-1.933.314-3.987.114-6.029-.53z"/></g>
+            <path d="M24.2 1.2h3.4v3.4H31v3.4h-3.4v3.4h-3.4V8H20.8V4.6h3.4V1.2Z" fill="#FACC15" transform="translate(-3 1)"/>
+          </svg>
+        `
+      },
+      {
+        id: 'xbox',
+        category: 'consoles',
+        name: 'Carte Cadeau Xbox',
+        shortName: 'Xbox Gift Card',
+        description: 'Utilisable sur Xbox Series X|S, Xbox One et Windows pour acheter jeux, extensions et pass.',
+        regions: ['FR', 'US', 'GL'],
+        denominationsByRegion: {
+          FR: [10, 15, 25, 50, 100],
+          US: [10, 15, 25, 50, 100],
+          GL: [10, 15, 25, 50, 100]
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#107C10] via-[#0D630D] to-[#073B07]',
+          textClass: 'text-white',
+          subTextClass: 'text-emerald-200',
+          badgeClass: 'bg-white/15 text-white border-white/25',
+          borderClass: 'border-[#0A520A]'
+        },
+        logoSvg: `
+          <svg class="w-8 h-8 fill-current text-white shrink-0" viewBox="0 0 24 24">
+            <path d="M4.102 21.033A11.947 11.947 0 0 0 12 24a11.96 11.96 0 0 0 7.902-2.967c1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912A11.942 11.942 0 0 0 24 12.004a11.95 11.95 0 0 0-3.57-8.536c-.027-.022-3.14-.558-5.168 3.159zm-6.524 0C6.71 2.91 3.597 3.446 3.57 3.468A11.95 11.95 0 0 0 0 12.004a11.942 11.942 0 0 0 2.662 7.535c-1.408-2.599 3.576-9.951 6.076-12.912zM12 3.582c2.838-1.805 5.471-1.547 6.322-1.26a11.952 11.952 0 0 0-12.644 0c.851-.287 3.484-.545 6.322 1.26z"/>
+          </svg>
+        `
+      },
+      {
+        id: 'nintendo',
+        category: 'consoles',
+        name: 'Carte Nintendo eShop',
+        shortName: 'Nintendo eShop',
+        description: 'Crédit officiel Nintendo Switch pour télécharger vos jeux, DLC et abonnement Nintendo Switch Online.',
+        regions: ['FR', 'US'],
+        denominationsByRegion: {
+          FR: [15, 25, 50],
+          US: [10, 20, 35, 50]
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#E60012] via-[#C80010] to-[#8F000B]',
+          textClass: 'text-white',
+          subTextClass: 'text-red-100',
+          badgeClass: 'bg-white/15 text-white border-white/25',
+          borderClass: 'border-[#99000C]'
+        },
+        logoSvg: `
+          <svg class="w-9 h-9 fill-current text-white shrink-0" viewBox="0 0 24 24">
+            <path d="M14.176 24h3.674c3.376 0 6.15-2.774 6.15-6.15V6.15C24 2.775 21.226 0 17.85 0H14.1c-.1 0-.176.075-.176.176v23.648c0 .1.075.176.176.176zm6.45-12.8a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8zM9.9 0H6.15C2.774 0 0 2.774 0 6.15v11.7C0 21.226 2.774 24 6.15 24H9.9c.1 0 .176-.075.176-.176V.176C10.076.075 10 0 9.9 0zM6.15 21.6a3.601 3.601 0 0 1-3.6-3.6V6a3.6 3.6 0 0 1 3.6-3.6h1.5v19.2h-1.5zm-.15-14.4a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z"/>
+          </svg>
+        `
+      },
+      {
+        id: 'roblox',
+        category: 'jeux',
+        name: 'Carte Cadeau Roblox (Robux)',
+        shortName: 'Roblox Gift Card',
+        description: 'Obtenez des Robux ou un abonnement Roblox Premium ainsi qu’un objet virtuel exclusif.',
+        regions: ['FR', 'US', 'GL'],
+        denominationsByRegion: {
+          FR: [10, 20, 25, 50],
+          US: [10, 25, 50, 100],
+          GL: [10, 25, 50, 100]
+        },
+        bonusByAmount: {
+          10: '800 Robux',
+          20: '1 700 Robux',
+          25: '2 000 Robux',
+          50: '4 500 Robux',
+          100: '10 000 Robux'
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#27272A] via-[#18181B] to-[#09090B]',
+          textClass: 'text-white',
+          subTextClass: 'text-zinc-300',
+          badgeClass: 'bg-white/15 text-white border-white/25',
+          borderClass: 'border-zinc-800'
+        },
+        logoSvg: `
+          <svg class="w-8 h-8 fill-current text-white shrink-0" viewBox="0 0 24 24">
+            <path d="M5.164 0L.16 18.928L18.836 24L23.84 5.072L5.164 0ZM14.022 15.324L8.68 13.912L10.092 8.57L15.434 9.982L14.022 15.324Z"/>
+          </svg>
+        `
+      },
+      {
+        id: 'fortnite',
+        category: 'jeux',
+        name: 'Carte Fortnite (V-Bucks)',
+        shortName: 'Fortnite V-Bucks',
+        description: 'Rechargez vos V-Bucks officiels pour débloquer le Passe de Combat, des skins et des danses sur toutes plateformes.',
+        regions: ['FR', 'US', 'GL'],
+        denominationsByRegion: {
+          FR: [9, 23, 37, 90],
+          US: [9, 23, 37, 90],
+          GL: [9, 23, 37, 90]
+        },
+        bonusByAmount: {
+          9: '1 000 V-Bucks',
+          23: '2 800 V-Bucks',
+          37: '5 000 V-Bucks',
+          90: '13 500 V-Bucks'
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#1D4ED8] via-[#1E3A8A] to-[#0F172A]',
+          textClass: 'text-white',
+          subTextClass: 'text-sky-200',
+          badgeClass: 'bg-sky-400/20 text-white border-sky-300/30',
+          borderClass: 'border-[#1E3A8A]'
+        },
+        logoSvg: `
+          <svg class="w-9 h-9 shrink-0" viewBox="0 0 24 24" fill="none">
+            <path fill="#FFFFFF" d="M5 1h15v5.2h-8.8v3.4H18v5.2h-6.8V23L5 21V1Z"/>
+          </svg>
+        `
+      },
+      {
+        id: 'steam',
+        category: 'mobile-pc',
+        name: 'Portefeuille Steam (Steam Wallet)',
+        shortName: 'Steam Wallet',
+        description: 'Rechargez votre compte Steam pour acheter vos jeux PC, extensions et objets communautaires.',
+        regions: ['FR', 'US', 'GL'],
+        denominationsByRegion: {
+          FR: [10, 20, 50, 100],
+          US: [10, 20, 50, 100],
+          GL: [10, 20, 50, 100]
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#1B2838] via-[#171A21] to-[#0E141B]',
+          textClass: 'text-white',
+          subTextClass: 'text-[#66C0F4]',
+          badgeClass: 'bg-[#66C0F4]/15 text-white border-[#66C0F4]/30',
+          borderClass: 'border-[#1B2838]'
+        },
+        logoSvg: `
+          <svg class="w-8 h-8 fill-current text-white shrink-0" viewBox="0 0 24 24">
+            <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.455 1.012zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.252 0-2.265-1.014-2.265-2.265z"/>
+          </svg>
+        `
+      },
+      {
+        id: 'google-play',
+        category: 'mobile-pc',
+        name: 'Google Play Store',
+        shortName: 'Google Play',
+        description: 'Pour acheter vos applications, jeux Android, films, livres et abonnements sur le Play Store.',
+        regions: ['FR', 'US'],
+        denominationsByRegion: {
+          FR: [15, 25, 50, 100],
+          US: [10, 15, 25, 50, 100]
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#1E293B] via-[#151C28] to-[#0F172A]',
+          textClass: 'text-white',
+          subTextClass: 'text-slate-300',
+          badgeClass: 'bg-white/10 text-white border-white/20',
+          borderClass: 'border-slate-800'
+        },
+        logoSvg: `
+          <svg class="w-8 h-8 shrink-0" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M3.609 1.814L13.792 12 3.61 22.186a1.79 1.79 0 0 1-.497-1.26V3.074c0-.49.193-.936.496-1.26z"/>
+            <path fill="#34A853" d="M17.218 8.574L13.792 12 3.609 1.814c.42-.442 1.096-.56 1.72-.202l11.889 6.962z"/>
+            <path fill="#FBBC05" d="M20.698 10.612c.83.486.83 1.289 0 1.775l-3.48 2.039L13.792 12l3.426-3.426 3.48 2.038z"/>
+            <path fill="#EA4335" d="M17.218 15.426L5.329 22.388c-.624.358-1.3.24-1.72-.202L13.792 12l3.426 3.426z"/>
+          </svg>
+        `
+      },
+      {
+        id: 'app-store',
+        category: 'mobile-pc',
+        name: 'Apple App Store & iTunes',
+        shortName: 'Apple Gift Card',
+        description: 'Pour tout l’univers Apple : App Store, iCloud+, Apple Music, Apple TV+ et achats intégrés iOS.',
+        regions: ['FR', 'US'],
+        denominationsByRegion: {
+          FR: [10, 15, 25, 50, 100],
+          US: [10, 15, 25, 50, 100]
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#1F2937] via-[#111827] to-[#030712]',
+          textClass: 'text-white',
+          subTextClass: 'text-zinc-400',
+          badgeClass: 'bg-white/10 text-white border-white/20',
+          borderClass: 'border-zinc-800'
+        },
+        logoSvg: `
+          <svg class="w-8 h-8 fill-current text-white shrink-0" viewBox="0 0 24 24">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.33c.64-.78 1.08-1.86.96-2.94-.93.04-2.06.62-2.72 1.4-.58.68-1.1 1.79-.96 2.84 1.04.08 2.08-.52 2.72-1.3z"/>
+          </svg>
+        `
+      },
+      {
+        id: 'microsoft',
+        category: 'mobile-pc',
+        name: 'Carte Microsoft Store',
+        shortName: 'Microsoft Store',
+        description: 'Crédit officiel pour le Microsoft Store Windows, applications, jeux PC et abonnements.',
+        regions: ['FR', 'US'],
+        denominationsByRegion: {
+          FR: [10, 15, 25, 50, 100],
+          US: [10, 15, 25, 50, 100]
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#27272A] via-[#1F1F22] to-[#121215]',
+          textClass: 'text-white',
+          subTextClass: 'text-zinc-400',
+          badgeClass: 'bg-white/10 text-white border-white/20',
+          borderClass: 'border-zinc-800'
+        },
+        logoSvg: `
+          <svg class="w-8 h-8 shrink-0" viewBox="0 0 24 24">
+            <rect x="2" y="2" width="9.5" height="9.5" fill="#F25022"/>
+            <rect x="12.5" y="2" width="9.5" height="9.5" fill="#7FBA00"/>
+            <rect x="2" y="12.5" width="9.5" height="9.5" fill="#00A4EF"/>
+            <rect x="12.5" y="12.5" width="9.5" height="9.5" fill="#FFB900"/>
+          </svg>
+        `
+      },
+      {
+        id: 'netflix',
+        category: 'streaming',
+        name: 'Carte Cadeau Netflix',
+        shortName: 'Netflix Gift Card',
+        description: 'Payez ou prolongez votre abonnement Netflix facilement sans carte bancaire.',
+        regions: ['FR', 'US'],
+        denominationsByRegion: {
+          FR: [15, 25, 50],
+          US: [15, 25, 50]
+        },
+        cardTheme: {
+          bgClass: 'bg-gradient-to-br from-[#141414] via-[#1C090B] to-[#45070A]',
+          textClass: 'text-white',
+          subTextClass: 'text-red-300',
+          badgeClass: 'bg-[#E50914]/25 text-white border-[#E50914]/40',
+          borderClass: 'border-[#52090D]'
+        },
+        logoSvg: `
+          <svg class="w-8 h-8 shrink-0" viewBox="0 0 24 24">
+            <path fill="#E50914" d="M5.398 0v.006c3.028 8.556 5.37 15.175 8.348 23.596 2.344.058 4.85.398 4.854.398-2.8-7.924-5.923-16.747-8.487-24zm8.489 0v9.63L18.6 22.951c-.043-7.86-.004-15.913.002-22.95zM5.398 1.05V24c1.873-.225 2.81-.312 4.715-.398v-9.22z"/>
+          </svg>
+        `
+      }
+    ];
+
+    // État global
+    const state = {
+      displayCurrency: 'GNF', // 'GNF' ou 'DEVISE'
+      globalRegion: 'FR',
+      activeCategory: 'all',
+      searchQuery: '',
+      selections: {}, // { [cardId]: { region: 'FR', amount: 25 } }
+      cart: []
+    };
+
+    // Initialisation des sélections par défaut pour chaque carte
+    function initSelections() {
+      CARDS.forEach(card => {
+        const defaultRegion = (card.regions && card.regions.includes('FR')) ? 'FR' : (card.regions ? card.regions[0] : 'FR');
+        const denoms = getCardDenominations(card, defaultRegion);
+        state.selections[card.id] = {
+          region: defaultRegion,
+          amount: denoms.includes(25) ? 25 : denoms[0]
+        };
+      });
+    }
+
+    // Changement d'affichage GNF / Devise
+    function setDisplayCurrency(mode) {
+      state.displayCurrency = mode;
+      const btnGnf = document.getElementById('btnCurrencyGNF');
+      const btnDev = document.getElementById('btnCurrencyDevise');
+
+      if (mode === 'GNF') {
+        btnGnf.className = 'px-2.5 py-1.5 rounded-lg transition bg-ink text-white';
+        btnDev.className = 'px-2.5 py-1.5 rounded-lg transition text-muted hover:text-ink';
+      } else {
+        btnDev.className = 'px-2.5 py-1.5 rounded-lg transition bg-ink text-white';
+        btnGnf.className = 'px-2.5 py-1.5 rounded-lg transition text-muted hover:text-ink';
+      }
+
+      renderCardsGrid();
+    }
+
+    // Barre globale de région
+    function renderGlobalRegionBar() {
+      const bar = document.getElementById('globalRegionBar');
+      if (!bar) return;
+      bar.innerHTML = Object.values(REGIONS).map(reg => {
+        const active = state.globalRegion === reg.code;
+        return `
+          <button
+            type="button"
+            onclick="setAllCardsRegion('${reg.code}')"
+            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
+              active
+                ? 'bg-ink text-white shadow-sm'
+                : 'text-zinc-600 hover:text-ink hover:bg-zinc-100'
+            }"
+          >
+            <span>${reg.flag}</span>
+            <span>${reg.name}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setAllCardsRegion(regionCode) {
+      state.globalRegion = regionCode;
+      CARDS.forEach(card => {
+        const regList = card.regions || ['FR', 'US'];
+        const targetReg = regList.includes(regionCode) ? regionCode : (regList.includes('US') ? 'US' : regList[0]);
+        state.selections[card.id].region = targetReg;
+        const denoms = getCardDenominations(card, targetReg);
+        if (!denoms.includes(state.selections[card.id].amount)) {
+          state.selections[card.id].amount = denoms.includes(25) ? 25 : denoms[0];
+        }
+      });
+      renderGlobalRegionBar();
+      renderCardsGrid();
+    }
+
+    // Onglets de catégories
+    function renderCategoryTabs() {
+      const container = document.getElementById('categoryTabs');
+      if (!container) return;
+      container.innerHTML = CATEGORIES.map(cat => {
+        const active = state.activeCategory === cat.id;
+        return `
+          <button
+            type="button"
+            onclick="setCategory('${cat.id}')"
+            class="px-3.5 py-2 rounded-xl text-xs font-semibold transition border shrink-0 ${
+              active
+                ? 'bg-ink text-white border-ink shadow-sm'
+                : 'bg-white text-zinc-600 border-line hover:text-ink hover:border-zinc-400'
+            }"
+          >
+            ${cat.label}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setCategory(catId) {
+      state.activeCategory = catId;
+      renderCategoryTabs();
+      renderCardsGrid();
+    }
+
+    function handleSearchInput(val) {
+      state.searchQuery = (val || '').trim().toLowerCase();
+      renderCardsGrid();
+    }
+
+    // Changement de région ou de montant sur une carte individuelle
+    function setCardRegion(cardId, regionCode) {
+      const card = CARDS.find(c => c.id === cardId);
+      if (!card) return;
+      state.selections[cardId].region = regionCode;
+      const denoms = getCardDenominations(card, regionCode);
+      if (!denoms.includes(state.selections[cardId].amount)) {
+        state.selections[cardId].amount = denoms.includes(25) ? 25 : denoms[0];
+      }
+      renderSingleCard(cardId);
+    }
+
+    function setCardAmount(cardId, amountVal) {
+      state.selections[cardId].amount = Number(amountVal);
+      renderSingleCard(cardId);
+    }
+
+    // Génère le HTML d'une carte cadeau
+    function buildCardHTML(card) {
+      const sel = state.selections[card.id];
+      const reg = REGIONS[sel.region] || REGIONS.FR;
+      const faceValue = formatDenomination(sel.amount, sel.region);
+      const priceObj = formatCardPrice(sel.amount, sel.region);
+      const bonusLabel = card.bonusByAmount ? card.bonusByAmount[sel.amount] : null;
+
+      const cardRegions = (card.regions || ['FR', 'US']).map(code => REGIONS[code]).filter(Boolean);
+      const regGridCols = cardRegions.length === 2 ? 'grid-cols-2' : (cardRegions.length === 3 ? 'grid-cols-3' : 'grid-cols-4');
+      const denoms = getCardDenominations(card, sel.region);
+      const denomGridCols = denoms.length === 3 ? 'grid-cols-3' : (denoms.length === 5 ? 'grid-cols-5' : 'grid-cols-4');
+
+      let badgeTitle = faceValue;
+      if (card.id === 'fortnite' && card.bonusByAmount && card.bonusByAmount[sel.amount]) {
+        badgeTitle = card.bonusByAmount[sel.amount];
+      } else if (card.id === 'ps-plus' && card.bonusByAmount && card.bonusByAmount[sel.amount]) {
+        badgeTitle = card.bonusByAmount[sel.amount];
+      }
+
+      return `
+        <article id="product-${card.id}" class="product-wrapper bg-surface border border-line rounded-2xl p-5 flex flex-col justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+          <div>
+            <!-- VISUEL DE CARTE CADEAU PHYSIQUE DE MAGASIN -->
+            <div class="physical-gift-card relative h-52 rounded-2xl ${card.cardTheme.bgClass} border ${card.cardTheme.borderClass} p-5 flex flex-col justify-between shadow-md mb-5 select-none">
+              <!-- Encoche de suspension magasin en haut au centre -->
+              <div class="absolute top-2.5 left-1/2 -translate-x-1/2 retail-hang-hole"></div>
+
+              <!-- Ligne du haut : Logo officiel + Valeur imprimée -->
+              <div class="flex items-start justify-between pt-2 gap-2">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  ${card.logoSvg}
+                  <div class="min-w-0">
+                    <span class="block font-display font-bold text-sm tracking-tight truncate ${card.cardTheme.textClass}">
+                      ${card.shortName}
+                    </span>
+                    <span class="block text-[11px] font-medium truncate ${card.cardTheme.subTextClass}">
+                      ${bonusLabel ? bonusLabel : 'Code digital officiel'}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Montant sur le coin supérieur droit -->
+                <div class="text-right shrink-0">
+                  <div class="px-2.5 py-1 rounded-lg border ${card.cardTheme.badgeClass} backdrop-blur-sm font-display font-extrabold text-sm sm:text-base tracking-tight">
+                    ${badgeTitle}
+                  </div>
+                  ${(card.id === 'fortnite' || card.id === 'ps-plus') ? `<span class="block text-[10px] font-semibold text-right mt-0.5 ${card.cardTheme.subTextClass}">Valeur : ${faceValue}</span>` : ''}
+                </div>
+              </div>
+
+              <!-- Bas de la carte physique : Région choisie + tarif GNF -->
+              <div class="flex items-end justify-between pt-4 border-t border-white/10">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-base leading-none">${reg.flag}</span>
+                  <span class="text-xs font-semibold tracking-wide uppercase ${card.cardTheme.textClass}">
+                    Compte ${reg.name} (${reg.code})
+                  </span>
+                </div>
+                <span class="text-xs font-bold tracking-wide ${card.cardTheme.textClass}">
+                  ${formatGnf(getGnfPrice(sel.amount, sel.region))}
+                </span>
+              </div>
+            </div>
+
+            <!-- NOM & DESCRIPTION -->
+            <div class="mb-4">
+              <div class="flex items-center justify-between gap-2">
+                <h2 class="font-display font-bold text-base sm:text-lg text-ink leading-snug">${card.name}</h2>
+                ${bonusLabel ? `<span class="shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-800 border border-line">${bonusLabel}</span>` : ''}
+              </div>
+              <p class="text-xs text-muted mt-1 leading-relaxed">${card.description}</p>
+            </div>
+
+            <!-- SÉLECTEUR DE RÉGION SUR LA CARTE -->
+            <div class="mb-3.5">
+              <div class="flex items-center justify-between text-xs mb-1.5">
+                <span class="font-medium text-zinc-600">Région supportée</span>
+                <span class="font-semibold text-ink">${reg.flag} ${reg.name} (${reg.symbol})</span>
+              </div>
+              <div class="grid ${regGridCols} gap-1.5">
+                ${cardRegions.map(r => {
+                  const isSelected = sel.region === r.code;
+                  return `
+                    <button
+                      type="button"
+                      onclick="setCardRegion('${card.id}', '${r.code}')"
+                      title="${r.name}"
+                      class="py-1.5 px-2 rounded-lg border text-center transition flex items-center justify-center gap-1.5 ${
+                        isSelected
+                          ? 'bg-zinc-900 text-white border-zinc-900 font-semibold shadow-sm'
+                          : 'bg-[#FAF9F6] text-zinc-700 border-line hover:border-zinc-400'
+                      }"
+                    >
+                      <span class="text-sm leading-none">${r.flag}</span>
+                      <span class="text-xs leading-none font-semibold">${r.name}</span>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- SÉLECTEUR DE MONTANT SUR LA CARTE -->
+            <div class="mb-5">
+              <span class="block text-xs font-medium text-zinc-600 mb-1.5">
+                Montant officiel disponible
+              </span>
+              <div class="grid ${denomGridCols} gap-1.5">
+                ${denoms.map(amt => {
+                  const active = sel.amount === amt;
+                  let mainLabel = formatDenomination(amt, sel.region);
+                  if (card.id === 'fortnite' && card.bonusByAmount && card.bonusByAmount[amt]) {
+                    mainLabel = card.bonusByAmount[amt].replace(' V-Bucks', ' VB');
+                  } else if (card.id === 'ps-plus' && card.bonusByAmount && card.bonusByAmount[amt]) {
+                    mainLabel = card.bonusByAmount[amt];
+                  }
+                  const priceGnf = getGnfPrice(amt, sel.region);
+                  const shortGnf = formatShortK(priceGnf);
+                  return `
+                    <button
+                      type="button"
+                      onclick="setCardAmount('${card.id}', ${amt})"
+                      class="py-2 px-1 rounded-lg border transition flex flex-col items-center justify-center gap-0.5 ${
+                        active
+                          ? 'bg-zinc-900 border-zinc-900 text-white shadow-sm'
+                          : 'bg-[#FAF9F6] border-line text-ink hover:border-zinc-400'
+                      }"
+                    >
+                      <span class="text-xs font-bold leading-tight truncate max-w-full">${mainLabel}</span>
+                      <span class="text-[10px] ${active ? 'text-zinc-300' : 'text-muted'}">${shortGnf}</span>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- PRIX & BOUTONS DE COMMANDE WHATSAPP / PANIER -->
+          <div class="pt-4 border-t border-line">
+            <div class="flex items-baseline justify-between mb-3">
+              <span class="text-xs text-muted">Prix net à payer</span>
+              <div class="text-right">
+                <span class="font-display font-extrabold text-lg text-ink block leading-none">
+                  ${priceObj.primary}
+                </span>
+                <span class="text-[11px] text-muted font-medium mt-1 block">
+                  ${priceObj.secondary}
+                </span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <!-- Commander directement sur WhatsApp -->
+              <button
+                type="button"
+                onclick="orderSingleCardOnWhatsApp('${card.id}')"
+                class="flex-1 py-2.5 px-3 rounded-xl bg-whatsapp hover:bg-whatsappDark text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition shadow-sm"
+              >
+                <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.126.556 4.124 1.535 5.862l-1.535 5.608 5.755-1.509c1.693.923 3.633 1.449 5.697 1.449 6.627 0 12-5.373 12-12s-5.373-12-11.452-11.41z"/>
+                </svg>
+                <span>Commander sur WhatsApp</span>
+              </button>
+
+              <!-- Ajouter au panier -->
+              <button
+                type="button"
+                onclick="addToCart('${card.id}')"
+                title="Ajouter au panier"
+                class="py-2.5 px-3 rounded-xl bg-[#FAF9F6] hover:bg-zinc-100 text-ink border border-line text-xs font-semibold transition flex items-center justify-center gap-1"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                <span class="hidden sm:inline">Panier</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderSingleCard(cardId) {
+      const card = CARDS.find(c => c.id === cardId);
+      const existingEl = document.getElementById(`product-${cardId}`);
+      if (card && existingEl) {
+        existingEl.outerHTML = buildCardHTML(card);
+      }
+    }
+
+    function renderCardsGrid() {
+      const grid = document.getElementById('cardsGrid');
+      if (!grid) return;
+
+      const filtered = CARDS.filter(card => {
+        const matchesCat = state.activeCategory === 'all' || card.category === state.activeCategory;
+        const matchesSearch = !state.searchQuery ||
+          card.name.toLowerCase().includes(state.searchQuery) ||
+          card.shortName.toLowerCase().includes(state.searchQuery) ||
+          card.description.toLowerCase().includes(state.searchQuery);
+        return matchesCat && matchesSearch;
+      });
+
+      const countEl = document.getElementById('catalogCountText');
+      if (countEl) {
+        countEl.textContent = `${filtered.length} carte${filtered.length > 1 ? 's' : ''}`;
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white border border-line rounded-2xl p-10 text-center">
+            <p class="font-display font-bold text-base text-ink">Aucune carte trouvée</p>
+            <p class="text-xs text-muted mt-1">Essayez un autre mot-clé ou réinitialisez les filtres.</p>
+            <button
+              type="button"
+              onclick="resetFilters()"
+              class="mt-4 px-4 py-2 rounded-xl bg-ink text-white text-xs font-semibold"
+            >
+              Afficher les 11 cartes
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(card => buildCardHTML(card)).join('');
+    }
+
+    function resetFilters() {
+      state.activeCategory = 'all';
+      state.searchQuery = '';
+      const input = document.getElementById('searchInput');
+      if (input) input.value = '';
+      renderCategoryTabs();
+      renderCardsGrid();
+    }
+
+    // Commande directe d'une carte sur WhatsApp
+    function orderSingleCardOnWhatsApp(cardId) {
+      const card = CARDS.find(c => c.id === cardId);
+      if (!card) return;
+      const sel = state.selections[cardId];
+      const reg = REGIONS[sel.region];
+      const valFormatted = formatDenomination(sel.amount, sel.region);
+      const gnfFormatted = formatGnf(getGnfPrice(sel.amount, sel.region));
+      const bonus = card.bonusByAmount && card.bonusByAmount[sel.amount] ? ` (${card.bonusByAmount[sel.amount]})` : '';
+
+      const message = `Bonjour LucienCard, je voudrais commander :\n- 1x ${card.name}${bonus}\n- Région : ${reg.name} (${reg.flag})\n- Valeur : ${valFormatted}\n- Prix : ${gnfFormatted}`;
+      const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+
+    // Gestion du Panier
+    function addToCart(cardId) {
+      const card = CARDS.find(c => c.id === cardId);
+      if (!card) return;
+      const sel = state.selections[cardId];
+      const reg = REGIONS[sel.region];
+      const key = `${card.id}_${sel.region}_${sel.amount}`;
+      const bonusLabel = card.bonusByAmount ? card.bonusByAmount[sel.amount] : null;
+      const unitGnf = getGnfPrice(sel.amount, sel.region);
+
+      const existing = state.cart.find(item => item.key === key);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        state.cart.push({
+          key,
+          cardId: card.id,
+          name: card.name,
+          shortName: card.shortName,
+          bonusLabel,
+          regionCode: sel.region,
+          regionName: reg.name,
+          regionFlag: reg.flag,
+          amount: sel.amount,
+          valFormatted: formatDenomination(sel.amount, sel.region),
+          gnfUnit: unitGnf,
+          qty: 1
+        });
+      }
+
+      updateCartBadge();
+      renderCart();
+      showToast(`${card.shortName} (${formatDenomination(sel.amount, sel.region)} • ${formatShortK(unitGnf)}) ajouté`);
+    }
+
+    function updateCartQty(key, delta) {
+      const idx = state.cart.findIndex(item => item.key === key);
+      if (idx === -1) return;
+      state.cart[idx].qty += delta;
+      if (state.cart[idx].qty <= 0) {
+        state.cart.splice(idx, 1);
+      }
+      updateCartBadge();
+      renderCart();
+    }
+
+    function updateCartBadge() {
+      const totalItems = state.cart.reduce((sum, item) => sum + item.qty, 0);
+      const badge = document.getElementById('cartCountBadge');
+      if (badge) badge.textContent = totalItems;
+    }
+
+    function renderCart() {
+      const listEl = document.getElementById('cartItemsList');
+      const totalEl = document.getElementById('cartTotalGnf');
+      const checkoutBtn = document.getElementById('btnCheckoutWhatsApp');
+      if (!listEl || !totalEl || !checkoutBtn) return;
+
+      if (state.cart.length === 0) {
+        listEl.innerHTML = `
+          <div class="h-full flex flex-col items-center justify-center text-center py-12">
+            <div class="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center text-muted mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
+            <p class="font-display font-bold text-sm text-ink">Votre panier est vide</p>
+            <p class="text-xs text-muted mt-1 max-w-xs">
+              Ajoutez plusieurs cartes cadeaux pour les commander en une seule fois sur WhatsApp.
+            </p>
+          </div>
+        `;
+        totalEl.textContent = '0 GNF';
+        checkoutBtn.disabled = true;
+        return;
+      }
+
+      checkoutBtn.disabled = false;
+      let totalGnf = 0;
+
+      listEl.innerHTML = state.cart.map(item => {
+        const lineGnf = item.gnfUnit * item.qty;
+        totalGnf += lineGnf;
+        return `
+          <div class="p-3.5 rounded-xl bg-[#FAF9F6] border border-line flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="text-sm">${item.regionFlag}</span>
+                <h4 class="font-display font-bold text-xs text-ink truncate">${item.name}</h4>
+              </div>
+              <p class="text-[11px] text-muted mt-0.5">
+                Région ${item.regionName} • Carte de <strong>${item.valFormatted}</strong>
+                ${item.bonusLabel ? ` (${item.bonusLabel})` : ''}
+              </p>
+              <p class="text-xs font-bold text-ink mt-1">
+                ${formatGnf(lineGnf)}
+              </p>
+            </div>
+
+            <div class="flex items-center gap-1.5 shrink-0 bg-white border border-line rounded-lg p-1">
+              <button
+                type="button"
+                onclick="updateCartQty('${item.key}', -1)"
+                class="w-6 h-6 rounded flex items-center justify-center text-ink hover:bg-zinc-100 font-bold text-xs"
+              >
+                −
+              </button>
+              <span class="text-xs font-bold px-1.5">${item.qty}</span>
+              <button
+                type="button"
+                onclick="updateCartQty('${item.key}', 1)"
+                class="w-6 h-6 rounded flex items-center justify-center text-ink hover:bg-zinc-100 font-bold text-xs"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      totalEl.textContent = formatGnf(totalGnf);
+    }
+
+    function toggleCartDrawer(open) {
+      const overlay = document.getElementById('cartOverlay');
+      const drawer = document.getElementById('cartDrawer');
+      if (!overlay || !drawer) return;
+
+      if (open) {
+        overlay.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          overlay.classList.remove('opacity-0');
+          drawer.classList.remove('translate-x-full');
+        });
+      } else {
+        overlay.classList.add('opacity-0');
+        drawer.classList.add('translate-x-full');
+        setTimeout(() => {
+          overlay.classList.add('hidden');
+        }, 200);
+      }
+    }
+
+    function checkoutCartOnWhatsApp() {
+      if (state.cart.length === 0) return;
+      let totalGnf = 0;
+      const lines = state.cart.map(item => {
+        const sub = item.gnfUnit * item.qty;
+        totalGnf += sub;
+        const bonus = item.bonusLabel ? ` (${item.bonusLabel})` : '';
+        return `- ${item.qty}x ${item.name}${bonus} | Région : ${item.regionName} (${item.regionFlag}) | Carte : ${item.valFormatted} | ${formatGnf(sub)}`;
+      });
+
+      const message = `Bonjour LucienCard, je souhaite commander :\n\n${lines.join('\n')}\n\nTotal : ${formatGnf(totalGnf)}`;
+      const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+
+    let toastTimer = null;
+    function showToast(text) {
+      const box = document.getElementById('toastBox');
+      const msg = document.getElementById('toastMessage');
+      if (!box || !msg) return;
+      msg.textContent = text;
+      box.classList.remove('translate-y-16', 'opacity-0');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        box.classList.add('translate-y-16', 'opacity-0');
+      }, 2400);
+    }
+
+    // --- ASSISTANT IA LUCIENCARD (MULTI-CLÉS AVEC BASCULE AUTOMATIQUE & CHIFFREMENT) ---
+    const _SALT = 'LucienCard-AI-2026-SecurityKey';
+    // Pool de clés sécurisées (invisibles et protégées contre l'extraction directe)
+    const _ENC_GEMINI_KEYS = [
+      "DSRNKAdWES9ELVkIfhpxWQNHayEDCTI6DBYsOiw6FSNSPTBDDw0BKlkvOwBVZllmVRY6GTQ=",
+      "DSRNKAdWES9EL1kMGRl/YlteeQIRUCEVOBAmGB0oHkVUGVdaBQ00CngKI2N7YGIEVzcQLCQ=",
+      "DSRNKAdWES9ELkoJHUJbcWNfZRIyUC88A0YeDRIfKj0UXFwWCgY6A3kuC1xhAEVmZ2FVDTQ=",
+      "DSRNKAdWES9ELX0ucVl8ZnVdRBssCgw3ISNMMQsRdC87UQhYcys4ImokD0BTWVpyXz0uLyQ=",
+      "DSRNKAdWES9EL0h4H0BVRHsASBENARQULDM0LwQ6dRsrPANZISc3AH4IJEREVGhwSmpWNzQ=",
+      "DSRNKAdWES9ELxUJEBRdWkZUQGA1EiFFGw4mMQ01OkAQUTc9DA4aVGYFPGEEcWtVVRowGxI=",
+      "DSRNKAdWES9ELncsPmFQSGV0WgEtKwwbDTczGxEvDyoXOCpeEFRKUnc3eFljW2gDZ2AxBCQ=",
+      "DSRNKAdWES9ELmMgER4EaQNGVDQKKSUcICJNGxEINB85GiIUOiAbBh8bDV1oZXNxXCMQKDQ="
+    ];
+    const _ENC_OPENROUTER_KEY = "Px5OBhdDNVBfVBV4eBhXBwIBTmcBV0dBXU1JKAFIKkYHD11Ze1QQAhV2LxpQVAsAGDVcARNHCk1Lc1EbKk0GDwEIclNHVxUgeg==";
+
+    function _d(b64, s) {
+      try {
+        const bin = atob(b64);
+        let r = '';
+        for (let i = 0; i < bin.length; i++) {
+          r += String.fromCharCode(bin.charCodeAt(i) ^ s.charCodeAt(i % s.length));
+        }
+        return r;
+      } catch (e) {
+        return '';
+      }
+    }
+
+    let currentGeminiKeyIndex = 0;
+    let aiChatHistory = [];
+    let isAiGenerating = false;
+
+    const AI_SYSTEM_INSTRUCTION = `Tu es Lucien AI, le conseiller shopping expert et chaleureux de la boutique officielle LucienCard (Guinée, site web: luciencard.web.app).
+Tu guides avec enthousiasme et précision les clients qui souhaitent acheter des cartes cadeaux digitales et codes de jeux officiels.
+
+Informations officielles de LucienCard :
+- Contact WhatsApp officiel : +224 662 24 30 70
+- Moyens de paiement : Orange Money Guinée et MTN Mobile Money.
+- Livraison : Code digital officiel envoyé immédiatement sur WhatsApp après confirmation du paiement.
+- Catalogue des 11 cartes :
+  1. PlayStation Network (PSN) : 10€, 20€, 25€, 50€, 100€ (France) et 10$, 20$, 25$, 50$, 100$ (USA)
+  2. PlayStation Plus : Essential 1 Mois (15€ / $15), 3 Mois (25€ / $25), 12 Mois (75€ / $80)
+  3. Carte Cadeau Xbox : 10, 15, 25, 50, 100 (€ / $ / Global)
+  4. Nintendo eShop : 15€, 25€, 50€ (France) et 10$, 20$, 35$, 50$ (USA)
+  5. Roblox (Robux) : 800 Robux (10€/$10), 1 700 Robux (20€), 2 000 Robux (25€/$25), 4 500 Robux (50€/$50), 10 000 Robux (100$)
+  6. Fortnite (V-Bucks) : 1 000 VB (9€ / $9), 2 800 VB (23€ / $23), 5 000 VB (37€ / $37), 13 500 VB (90€ / $90)
+  7. Portefeuille Steam : 10€, 20€, 50€, 100€ (et $10, $20, $50, $100 / Global)
+  8. Google Play Store : 15€, 25€, 50€, 100€ (France) et $10, $15, $25, $50, $100 (USA)
+  9. Apple App Store & iTunes : 10, 15, 25, 50, 100 (€ / $)
+  10. Microsoft Store : 10, 15, 25, 50, 100 (€ / $)
+  11. Netflix : 15€, 25€, 50€ (France & USA)
+- Régions :
+  * France 🇫🇷 (Euros €)
+  * USA 🇺🇸 (Dollars $)
+  * Global 🌍 (Steam, Roblox, Fortnite, Xbox)
+  Important : Rappelle aux clients que la région de la carte doit impérativement correspondre à la région de leur compte (ex: compte PlayStation français = carte PSN France).
+- Prix en Franc Guinéen (GNF) : conversion réelle de la devise + une marge transparente de 20 000 GNF par carte.
+  Exemples de prix :
+  * $10 = 108 000 GNF | $20 = 196 000 GNF | $25 = 240 000 GNF | $50 = 460 000 GNF | $100 = 900 000 GNF
+  * 10€ = 115 000 GNF | 15€ = 162 500 GNF | 20€ = 210 000 GNF | 25€ = 257 500 GNF | 50€ = 495 000 GNF | 100€ = 970 000 GNF
+  * Fortnite 1 000 VB = 105 500 GNF (FR) ou 99 200 GNF (US)
+- Style de réponse : Très concis (2 à 4 phrases percutantes), poli, chaleureux, bien formaté avec des puces ou du gras, et guide toujours vers WhatsApp (+224 662 24 30 70) pour finaliser la commande.`;
+
+    function toggleAiModal(open) {
+      const drawer = document.getElementById('aiChatDrawer');
+      const overlay = document.getElementById('aiChatOverlay');
+      if (!drawer || !overlay) return;
+
+      // L'assistant IA est réservé aux utilisateurs connectés
+      if (open && !window.LC_CURRENT_USER) {
+        window.LC_PENDING_AI_OPEN = true;
+        toggleAuthModal(true);
+        return;
+      }
+
+      if (open) {
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        drawer.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
+        if (aiChatHistory.length === 0) {
+          renderAiWelcomeMessage();
+        }
+        setTimeout(() => {
+          const input = document.getElementById('aiChatInput');
+          if (input) input.focus();
+        }, 250);
+      } else {
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+        drawer.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+      }
+    }
+
+    function renderAiWelcomeMessage() {
+      const box = document.getElementById('aiChatMessages');
+      if (!box) return;
+      box.innerHTML = `
+        <div class="flex items-start gap-2.5">
+          <div class="w-7 h-7 rounded-xl bg-zinc-900 text-amber-300 flex items-center justify-center shrink-0 border border-zinc-700 font-bold text-xs">
+            ✨
+          </div>
+          <div class="bg-white border border-line rounded-2xl rounded-tl-sm p-3.5 shadow-sm max-w-[85%] text-ink leading-relaxed">
+            <p class="font-semibold text-xs text-ink mb-1">Bonjour et bienvenue chez LucienCard ! 👋</p>
+            <p class="text-zinc-600 mb-2">Je suis votre conseiller IA officiel (Gemini 3.8 Flash). Je peux vous aider à :</p>
+            <ul class="space-y-1 text-zinc-600 list-disc list-inside">
+              <li>Choisir la bonne carte selon votre console ou jeu</li>
+              <li>Vérifier la région compatible (France 🇫🇷 ou USA 🇺🇸)</li>
+              <li>Calculer vos tarifs exacts en Francs Guinéens (GNF)</li>
+            </ul>
+            <p class="text-zinc-600 mt-2">Que recherchez-vous aujourd'hui ?</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function formatAiMarkdown(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-ink">$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+        .replace(/\n\n/g, '<br/><br/>')
+        .replace(/\n/g, '<br/>');
+    }
+
+    function appendAiMessage(sender, text) {
+      const box = document.getElementById('aiChatMessages');
+      if (!box) return;
+
+      const isUser = sender === 'user';
+      const msgDiv = document.createElement('div');
+      msgDiv.className = isUser ? 'flex justify-end' : 'flex items-start gap-2.5';
+
+      if (isUser) {
+        msgDiv.innerHTML = `
+          <div class="bg-zinc-900 text-white rounded-2xl rounded-tr-sm px-3.5 py-2.5 shadow-sm max-w-[85%] leading-relaxed">
+            ${formatAiMarkdown(text)}
+          </div>
+        `;
+      } else {
+        msgDiv.innerHTML = `
+          <div class="w-7 h-7 rounded-xl bg-zinc-900 text-amber-300 flex items-center justify-center shrink-0 border border-zinc-700 font-bold text-xs mt-0.5">
+            ✨
+          </div>
+          <div class="bg-white border border-line rounded-2xl rounded-tl-sm p-3.5 shadow-sm max-w-[85%] text-ink leading-relaxed">
+            ${formatAiMarkdown(text)}
+          </div>
+        `;
+      }
+
+      box.appendChild(msgDiv);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function sendQuickAiPrompt(promptText) {
+      const input = document.getElementById('aiChatInput');
+      if (input) {
+        input.value = promptText;
+        handleAiChatSubmit(new Event('submit'));
+      }
+    }
+
+    async function handleAiChatSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      if (isAiGenerating) return;
+      if (!window.LC_CURRENT_USER) {
+        toggleAiModal(false);
+        toggleAuthModal(true);
+        return;
+      }
+
+      const input = document.getElementById('aiChatInput');
+      const userText = (input.value || '').trim();
+      if (!userText) return;
+
+      input.value = '';
+      appendAiMessage('user', userText);
+
+      isAiGenerating = true;
+      const sendBtn = document.getElementById('btnSendAiMessage');
+      const typing = document.getElementById('aiTypingIndicator');
+      if (sendBtn) sendBtn.disabled = true;
+      if (typing) typing.classList.remove('hidden');
+
+      const messagesBox = document.getElementById('aiChatMessages');
+      if (messagesBox) messagesBox.scrollTop = messagesBox.scrollHeight;
+
+      aiChatHistory.push({ role: 'user', parts: [{ text: userText }] });
+
+      const payload = {
+        systemInstruction: { parts: [{ text: AI_SYSTEM_INSTRUCTION }] },
+        contents: aiChatHistory
+      };
+
+      let botReply = null;
+      const totalKeys = _ENC_GEMINI_KEYS.length;
+
+      // 1. Rotation automatique sur les 8 clés Gemini : si une clé est épuisée ou en quota, la suivante prend le relais
+      for (let attempt = 0; attempt < totalKeys; attempt++) {
+        const keyIndex = (currentGeminiKeyIndex + attempt) % totalKeys;
+        const key = _d(_ENC_GEMINI_KEYS[keyIndex], _SALT);
+        if (!key) continue;
+
+        for (const model of ['gemini-3.8-flash', 'gemini-flash-lite-latest']) {
+          try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 6500);
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+              signal: controller.signal
+            });
+            clearTimeout(timeout);
+
+            if (res.ok) {
+              const data = await res.json();
+              botReply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (botReply) {
+                currentGeminiKeyIndex = keyIndex;
+                break;
+              }
+            } else if (res.status === 429 || res.status === 403 || res.status === 400) {
+              console.warn(`Clé Gemini #${keyIndex + 1} épuisée (status ${res.status}), bascule automatique sur la suivante...`);
+              break;
+            }
+          } catch (err) {
+            console.warn(`Erreur clé Gemini #${keyIndex + 1} (${model}):`, err);
+          }
+        }
+
+        if (botReply) break;
+      }
+
+      // 2. Si toutes les clés Gemini directes sont épuisées, relais ultime avec OpenRouter
+      if (!botReply) {
+        const orKey = _d(_ENC_OPENROUTER_KEY, _SALT);
+        if (orKey) {
+          try {
+            console.warn('Toutes les clés Gemini sont temporairement épuisées, relais OpenRouter enclenché...');
+            const orMessages = [{ role: 'system', content: AI_SYSTEM_INSTRUCTION }];
+            aiChatHistory.forEach(item => {
+              orMessages.push({
+                role: item.role === 'model' ? 'assistant' : 'user',
+                content: item.parts?.[0]?.text || ''
+              });
+            });
+
+            const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${orKey}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://luciencard.web.app',
+                'X-Title': 'LucienCard'
+              },
+              body: JSON.stringify({
+                model: 'google/gemini-3.8-flash',
+                max_tokens: 350,
+                messages: orMessages
+              })
+            });
+
+            if (res.ok) {
+              const data = await res.json();
+              botReply = data.choices?.[0]?.message?.content;
+            }
+          } catch (e) {
+            console.error('Erreur OpenRouter secours:', e);
+          }
+        }
+      }
+
+      if (!botReply) {
+        botReply = "Désolé, les serveurs d'IA sont temporairement très sollicités. Vous pouvez joindre directement notre équipe sur WhatsApp au +224 662 24 30 70 pour toute question ou commande !";
+      }
+
+      aiChatHistory.push({ role: 'model', parts: [{ text: botReply }] });
+
+      if (typing) typing.classList.add('hidden');
+      if (sendBtn) sendBtn.disabled = false;
+      isAiGenerating = false;
+
+      appendAiMessage('bot', botReply);
+    }
+
+    function resetAiChat() {
+      aiChatHistory = [];
+      const box = document.getElementById('aiChatMessages');
+      if (box) box.innerHTML = '';
+      renderAiWelcomeMessage();
+    }
+
+    // Démarrage au chargement de la page
+    window.addEventListener('DOMContentLoaded', () => {
+      initSelections();
+      renderGlobalRegionBar();
+      renderCategoryTabs();
+      renderCardsGrid();
+      renderCart();
+    });
+  </script>
+
+  <!-- Firebase SDK & Analytics -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+    import {
+      getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, OAuthProvider,
+      signInAnonymously, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+      sendEmailVerification, sendPasswordResetEmail, signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBiHfk56i7vxhCrM_vb67EHvLq3GnnmpU8",
+      authDomain: "luciencard.firebaseapp.com",
+      projectId: "luciencard",
+      storageBucket: "luciencard.firebasestorage.app",
+      messagingSenderId: "786919500581",
+      appId: "1:786919500581:web:24f93ac1c9e06dcc2088cc",
+      measurementId: "G-S91C8X3EWG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // ---------- AUTHENTIFICATION FIREBASE ----------
+    const auth = getAuth(app);
+    auth.languageCode = 'fr';
+    let emailMode = 'signin'; // 'signin' | 'signup'
+
+    const ERRORS = {
+      'auth/invalid-credential': 'E-mail ou mot de passe incorrect.',
+      'auth/invalid-email': 'Adresse e-mail invalide.',
+      'auth/user-not-found': 'Aucun compte avec cet e-mail.',
+      'auth/wrong-password': 'Mot de passe incorrect.',
+      'auth/email-already-in-use': 'Cet e-mail est déjà utilisé. Connectez-vous.',
+      'auth/weak-password': 'Mot de passe trop faible (6 caractères minimum).',
+      'auth/popup-closed-by-user': 'Fenêtre de connexion fermée.',
+      'auth/cancelled-popup-request': 'Connexion annulée.',
+      'auth/account-exists-with-different-credential': 'Un compte existe déjà avec cet e-mail via un autre fournisseur.',
+      'auth/too-many-requests': 'Trop de tentatives. Réessayez dans quelques minutes.',
+      'auth/network-request-failed': 'Problème de connexion internet.',
+      'auth/unauthorized-domain': 'Domaine non autorisé dans Firebase.'
+    };
+
+    function showAuthError(err) {
+      const el = document.getElementById('authError');
+      if (!el) return;
+      if (!err) { el.classList.add('hidden'); el.textContent = ''; return; }
+      el.textContent = ERRORS[err.code] || ('Erreur : ' + (err.message || err));
+      el.classList.remove('hidden');
+    }
+
+    window.toggleAuthModal = function (open) {
+      const overlay = document.getElementById('authOverlay');
+      const modal = document.getElementById('authModal');
+      if (open) {
+        showAuthError(null);
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+      } else {
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+      }
+    };
+
+    window.handleAccountButton = function () { window.toggleAuthModal(true); };
+
+    window.lcSignInGoogle = async function () {
+      try { showAuthError(null); await signInWithPopup(auth, new GoogleAuthProvider()); }
+      catch (e) { showAuthError(e); }
+    };
+
+    window.lcSignInMicrosoft = async function () {
+      try {
+        showAuthError(null);
+        const provider = new OAuthProvider('microsoft.com');
+        provider.setCustomParameters({ prompt: 'select_account' });
+        await signInWithPopup(auth, provider);
+      } catch (e) { showAuthError(e); }
+    };
+
+    window.lcSignInAnonymous = async function () {
+      try { showAuthError(null); await signInAnonymously(auth); }
+      catch (e) { showAuthError(e); }
+    };
+
+    window.lcToggleEmailMode = function () {
+      emailMode = emailMode === 'signin' ? 'signup' : 'signin';
+      document.getElementById('authEmailBtn').textContent = emailMode === 'signin' ? 'Se connecter' : 'Créer mon compte';
+      document.getElementById('authModeToggle').textContent = emailMode === 'signin' ? 'Créer un compte' : "J'ai déjà un compte";
+      document.getElementById('authPassword').autocomplete = emailMode === 'signin' ? 'current-password' : 'new-password';
+      showAuthError(null);
+    };
+
+    window.lcEmailSubmit = async function (e) {
+      e.preventDefault();
+      const email = document.getElementById('authEmail').value.trim();
+      const pwd = document.getElementById('authPassword').value;
+      try {
+        showAuthError(null);
+        if (emailMode === 'signup') {
+          const cred = await createUserWithEmailAndPassword(auth, email, pwd);
+          try { await sendEmailVerification(cred.user); } catch (_) {}
+        } else {
+          await signInWithEmailAndPassword(auth, email, pwd);
+        }
+      } catch (err) { showAuthError(err); }
+    };
+
+    window.lcResetPassword = async function () {
+      const email = document.getElementById('authEmail').value.trim();
+      if (!email) { showAuthError({ message: "Saisissez d'abord votre adresse e-mail." }); return; }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showAuthError(null);
+        if (window.showToast) window.showToast('E-mail de réinitialisation envoyé');
+      } catch (err) { showAuthError(err); }
+    };
+
+    window.lcSignOut = async function () {
+      await signOut(auth);
+      window.toggleAuthModal(false);
+      if (window.toggleAiModal) window.toggleAiModal(false);
+      if (window.resetAiChat) window.resetAiChat();
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      window.LC_CURRENT_USER = user || null;
+      const label = document.getElementById('accountLabel');
+      const vOut = document.getElementById('authViewSignedOut');
+      const vIn = document.getElementById('authViewSignedIn');
+
+      if (user) {
+        const name = user.isAnonymous ? 'Invité' : (user.displayName || (user.email ? user.email.split('@')[0] : 'Mon compte'));
+        if (label) label.textContent = name;
+        document.getElementById('authUserName').textContent = name;
+        document.getElementById('authUserEmail').textContent = user.isAnonymous ? 'Session invitée' : (user.email || '');
+        document.getElementById('authGuestNotice').classList.toggle('hidden', !user.isAnonymous);
+        vOut.classList.add('hidden');
+        vIn.classList.remove('hidden');
+
+        // Ouvre automatiquement l'IA si l'utilisateur voulait y accéder
+        if (window.LC_PENDING_AI_OPEN) {
+          window.LC_PENDING_AI_OPEN = false;
+          window.toggleAuthModal(false);
+          window.toggleAiModal(true);
+        }
+      } else {
+        if (label) label.textContent = 'Connexion';
+        vOut.classList.remove('hidden');
+        vIn.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
